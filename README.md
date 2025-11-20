@@ -1,20 +1,5 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
-
-# Run and deploy your AI Studio app
-
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/drive/1x0AezzCk26J0CLQHf1lY6uitF-o7unbS
-
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Full MERN Stack: Real MongoDB database, Express API, React Frontend, and Node.js runtime.
+Hybrid Resilience: The unique "Offline/Mock Mode" ensures that even if your database goes down or isn't running, the entire app (Authentication, Course Creation, Progress Tracking, Q&A) switches to localStorage automatically so the UI never breaks.
+Interactive Learning: Students can watch videos, take quizzes, and now Ask Questions directly to instructors in a threaded Q&A section.
+Progress Tracking: Every video watched and quiz taken is recorded, giving students a visual dashboard of their learning journey.
+Polished UI: Dark mode, responsive design, and high-quality dynamic thumbnails make it feel like a professional product.
