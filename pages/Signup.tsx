@@ -1,0 +1,135 @@
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { registerUser } from '../services/storageService';
+import { UserRole } from '../types';
+import { Lock, Mail, User as UserIcon } from 'lucide-react';
+
+const Signup = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState<UserRole>(UserRole.STUDENT);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const { user, token } = await registerUser(name, email, password, role);
+      login(user, token);
+      navigate('/profile');
+    } catch (err: any) {
+      setError(err.message || 'Failed to create account');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-xl dark:bg-gray-800">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Create Account</h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Join Codista LMS today
+          </p>
+        </div>
+
+        {error && (
+          <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-200">
+            {error}
+          </div>
+        )}
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4 rounded-md shadow-sm">
+            <div className="relative">
+              <UserIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="block w-full rounded-md border-0 py-3 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-brand-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-brand-500 sm:text-sm sm:leading-6"
+                placeholder="Full Name"
+              />
+            </div>
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="block w-full rounded-md border-0 py-3 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-brand-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-brand-500 sm:text-sm sm:leading-6"
+                placeholder="Email address"
+              />
+            </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full rounded-md border-0 py-3 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-brand-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-brand-500 sm:text-sm sm:leading-6"
+                placeholder="Password"
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+                <label className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border p-4 ${role === UserRole.STUDENT ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <input 
+                        type="radio" 
+                        name="role" 
+                        value={UserRole.STUDENT} 
+                        checked={role === UserRole.STUDENT} 
+                        onChange={() => setRole(UserRole.STUDENT)} 
+                        className="sr-only"
+                    />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">Student</span>
+                </label>
+                <label className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border p-4 ${role === UserRole.INSTRUCTOR ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <input 
+                        type="radio" 
+                        name="role" 
+                        value={UserRole.INSTRUCTOR} 
+                        checked={role === UserRole.INSTRUCTOR} 
+                        onChange={() => setRole(UserRole.INSTRUCTOR)} 
+                        className="sr-only"
+                    />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">Instructor</span>
+                </label>
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative flex w-full justify-center rounded-md bg-brand-600 px-3 py-3 text-sm font-semibold text-white hover:bg-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:opacity-50"
+            >
+              {loading ? 'Creating account...' : 'Sign up'}
+            </button>
+          </div>
+        </form>
+        
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+          Already have an account?{' '}
+          <Link to="/login" className="font-semibold text-brand-600 hover:text-brand-500">
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Signup;
